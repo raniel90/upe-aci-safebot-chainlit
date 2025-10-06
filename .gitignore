@@ -1,0 +1,64 @@
+# Environment variables
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Chainlit (ignorar apenas cache e arquivos temporários)
+.chainlit/.files/
+.chainlit/chat_files/
+.files/
+# Manter configurações e traduções
+# !.chainlit/config.toml
+# !.chainlit/translations/
+
+# Temporary files
+tmp/
+*.tmp
+*.log
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+chromadb/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Poetry (manter poetry.lock para reprodutibilidade)
+# poetry.lock

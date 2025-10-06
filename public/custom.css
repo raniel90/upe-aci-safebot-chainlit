@@ -1,0 +1,195 @@
+/* ============================================================================
+   SafeBot - Customização CSS
+   Cores baseadas no SafeBot Legacy
+   ============================================================================ */
+
+/* Variáveis de cores do SafeBot */
+:root {
+  --safebot-brand: #FF4017;
+  --safebot-brand-dark: #CC3312;
+  --safebot-brand-light: #FF6B47;
+  --safebot-background: #111113;
+  --safebot-background-secondary: #27272A;
+  --safebot-text-primary: #FAFAFA;
+  --safebot-text-muted: #A1A1AA;
+  --safebot-positive: #22C55E;
+  --safebot-destructive: #E53935;
+}
+
+/* Remover logo grande/marca d'água do lado direito na tela de login */
+#login-background-image,
+.login-background,
+.login-side-image,
+img[src*="logo"][style*="position: fixed"],
+img[style*="position: absolute"][style*="right"],
+.MuiBox-root > img[style*="position"],
+[class*="loginBackground"],
+[class*="LoginBackground"],
+[id*="background-image"],
+[data-testid*="background"] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Logo no header */
+.MuiAppBar-root img[alt="logo"] {
+  filter: brightness(1.1);
+}
+
+/* Botões primários com cor do SafeBot */
+.MuiButton-contained {
+  background-color: var(--safebot-brand) !important;
+}
+
+.MuiButton-contained:hover {
+  background-color: var(--safebot-brand-dark) !important;
+}
+
+/* Links e destaques */
+a {
+  color: var(--safebot-brand-light) !important;
+}
+
+/* Barra de progresso */
+.MuiLinearProgress-bar {
+  background-color: var(--safebot-brand) !important;
+}
+
+/* Chips e tags */
+.MuiChip-filled {
+  background-color: var(--safebot-brand) !important;
+}
+
+/* Scrollbar customizada (tema escuro) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--safebot-background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--safebot-brand);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--safebot-brand-dark);
+}
+
+/* Animação de loading */
+@keyframes safebot-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-indicator {
+  animation: safebot-pulse 1.5s ease-in-out infinite;
+}
+
+/* Mensagens do assistente com destaque SafeBot */
+.message-assistant {
+  border-left: 3px solid var(--safebot-brand);
+  padding-left: 12px;
+}
+
+/* Badges e notificações */
+.badge-success {
+  background-color: var(--safebot-positive) !important;
+}
+
+.badge-error {
+  background-color: var(--safebot-destructive) !important;
+}
+
+/* Tooltip com cores SafeBot */
+.MuiTooltip-tooltip {
+  background-color: var(--safebot-background-secondary) !important;
+  border: 1px solid var(--safebot-brand) !important;
+}
+
+/* Cards e containers */
+.card-container {
+  background-color: var(--safebot-background-secondary);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 64, 23, 0.2);
+}
+
+/* Destaque para roles */
+.role-supervisor {
+  color: var(--safebot-brand-light) !important;
+}
+
+.role-user {
+  color: var(--safebot-positive) !important;
+}
+
+/* Ícones com cor da marca */
+.icon-brand {
+  color: var(--safebot-brand) !important;
+}
+
+/* Animação de entrada suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Header com gradiente SafeBot */
+.app-header {
+  background: linear-gradient(90deg, var(--safebot-background) 0%, var(--safebot-background-secondary) 100%);
+  border-bottom: 2px solid var(--safebot-brand);
+}
+
+/* Footer */
+.app-footer {
+  color: var(--safebot-text-muted);
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+}
+
+/* Código com destaque */
+code {
+  background-color: var(--safebot-background-secondary);
+  color: var(--safebot-brand-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Citações */
+blockquote {
+  border-left: 4px solid var(--safebot-brand);
+  padding-left: 16px;
+  margin: 16px 0;
+  color: var(--safebot-text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-logo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .card-container {
+    margin: 8px;
+  }
+}
