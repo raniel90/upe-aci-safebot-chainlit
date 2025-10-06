@@ -116,6 +116,8 @@ Este projeto foi desenvolvido utilizando as **melhores práticas de prompt engin
 
 ## 🚀 Instalação
 
+> 💡 **Instalando no Ubuntu?** Consulte o guia detalhado: [INSTALL_UBUNTU.md](INSTALL_UBUNTU.md)
+
 ### 📋 Pré-requisitos
 
 - Python 3.12 ou superior
