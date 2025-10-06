@@ -33,7 +33,7 @@ Este projeto utiliza técnicas avançadas de **RAG (Retrieval Augmented Generati
 
 ### 🌟 Diferenciais
 
-Este projeto foi desenvolvido aproveitando as **melhores práticas de prompt engineering** e **estratégias de RAG** do projeto legado [safebot-legacy](./safebot-legacy), mas reimplementado do zero usando o framework **Chainlit** para proporcionar uma experiência de chat moderna e intuitiva.
+Este projeto foi desenvolvido utilizando as **melhores práticas de prompt engineering** e **estratégias avançadas de RAG** para proporcionar uma experiência de chat moderna e intuitiva com o framework **Chainlit**.
 
 ---
 
@@ -124,10 +124,11 @@ Este projeto foi desenvolvido aproveitando as **melhores práticas de prompt eng
 
 ### 🔧 Passo a Passo
 
-1. **Clone ou navegue até o projeto:**
+1. **Clone o repositório:**
 
 ```bash
-cd /Users/sroa/Documents/gitworkspace/phd/aci/safebot-chainlit
+git clone https://github.com/raniel90/upe-aci-safebot-chainlit.git
+cd upe-aci-safebot-chainlit
 ```
 
 2. **Instale as dependências com Poetry:**
@@ -246,31 +247,15 @@ safebot-chainlit/
 │   └── pdfs/
 │       └── nr-06-atualizada-2022-1.pdf  # PDF da NR-06
 │
-├── tmp/
-│   └── chromadb/            # Base de conhecimento vetorial (criada automaticamente)
-│
-└── safebot-legacy/          # Projeto legado (referência)
-    └── agent/
-        ├── core/
-        │   └── agent.py     # Referência de prompts e RAG
-        └── data/
-            └── pdfs/        # PDFs originais
+└── tmp/
+    └── chromadb/            # Base de conhecimento vetorial (criada automaticamente)
 ```
 
 ---
 
-## 🧠 Inspiração e Referências
+## 🧠 Tecnologias e Referências
 
-### 📚 Projeto Legado (safebot-legacy)
-
-Este projeto é uma reimplementação moderna do [safebot-legacy](./safebot-legacy), aproveitando:
-
-✅ **Prompts otimizados** com anos de refinamento  
-✅ **Estratégia de RAG** testada e validada  
-✅ **Boas práticas** de prompt engineering  
-✅ **Instruções especializadas** por contexto
-
-### 🔗 Tecnologias Utilizadas
+### 🔗 Stack Tecnológico
 
 - [Chainlit](https://chainlit.io) - Framework de chat conversacional
 - [LangChain](https://langchain.com) - Framework para aplicações LLM
@@ -311,10 +296,10 @@ Desenvolvido como parte do projeto de pesquisa em IA e Segurança do Trabalho.
 
 ## 🙏 Agradecimentos
 
-- À equipe do projeto **safebot-legacy** pelas bases sólidas
 - À comunidade **Chainlit** pelo framework incrível
 - Ao **LangChain** pela facilidade de integração
 - À **OpenAI** pelos modelos de linguagem avançados
+- Aos profissionais de Segurança do Trabalho que inspiram este projeto
 
 ---
 
