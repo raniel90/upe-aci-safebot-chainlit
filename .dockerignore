@@ -1,0 +1,80 @@
+# ============================================================================
+# SafeBot Chainlit - .dockerignore
+# ============================================================================
+# Arquivos e diretórios a serem ignorados no build do Docker
+# ============================================================================
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Chainlit cache
+.chainlit/.files/
+.chainlit/chat_files/
+.files/
+
+# Temporários
+tmp/
+*.tmp
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Documentação que não precisa no container
+*.md
+!README.md
+LICENSE
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Arquivos de teste
+tests/
+test_*.py
+*_test.py
+
+# Poetry lock (já copiado explicitamente)
+# poetry.lock
+
+# Env files (não copiar para segurança)
+.env
+.env.local
+.env.production

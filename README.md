@@ -116,7 +116,15 @@ Este projeto foi desenvolvido utilizando as **melhores práticas de prompt engin
 
 ## 🚀 Instalação
 
-> 💡 **Instalando no Ubuntu?** Consulte o guia detalhado: [INSTALL_UBUNTU.md](INSTALL_UBUNTU.md)
+### 🎯 Escolha seu método de instalação:
+
+| Método | Dificuldade | Recomendado para | Link |
+|--------|-------------|------------------|------|
+| 🐳 **Docker** | ⭐ Fácil | Produção, Deploy, Iniciantes | [DOCKER.md](DOCKER.md) |
+| 🐧 **Ubuntu** | ⭐⭐ Médio | Desenvolvimento Linux | [INSTALL_UBUNTU.md](INSTALL_UBUNTU.md) |
+| 💻 **Manual** | ⭐⭐⭐ Avançado | Outros sistemas, Customização | [Abaixo](#-passo-a-passo) |
+
+---
 
 ### 📋 Pré-requisitos
 

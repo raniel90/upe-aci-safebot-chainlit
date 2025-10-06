@@ -1,8 +1,31 @@
 # ⚡ Guia Rápido - SafeBot
 
-## 🚀 Início Rápido (5 minutos)
+## 🎯 Escolha seu método (3-5 minutos)
 
-### 1️⃣ Instalar Dependências
+### 🐳 Opção 1: Docker (Mais Fácil - Recomendado)
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/raniel90/upe-aci-safebot-chainlit.git
+cd upe-aci-safebot-chainlit
+
+# 2. Configurar variáveis
+cp .env.example .env
+nano .env  # Adicione sua OPENAI_API_KEY
+
+# 3. Executar com Docker Compose
+docker compose up -d
+
+# Pronto! Acesse http://localhost:8000
+```
+
+📖 **Guia completo:** [DOCKER.md](DOCKER.md)
+
+---
+
+### 💻 Opção 2: Instalação Manual (Python + Poetry)
+
+#### 1️⃣ Instalar Dependências
 
 ```bash
 # Instalar Poetry (se não tiver)
@@ -93,8 +116,10 @@ poetry install
 ## 📚 Mais Informações
 
 - **README completo**: [README.md](README.md)
+- **Guia Docker**: [DOCKER.md](DOCKER.md)
+- **Guia Ubuntu**: [INSTALL_UBUNTU.md](INSTALL_UBUNTU.md)
+- **Autenticação**: [AUTHENTICATION.md](AUTHENTICATION.md)
 - **Documentação Chainlit**: https://docs.chainlit.io
-- **Projeto Legado (Referência)**: [safebot-legacy/](safebot-legacy/)
 
 ---
 

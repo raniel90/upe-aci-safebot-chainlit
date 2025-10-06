@@ -1,0 +1,84 @@
+# ============================================================================
+# SafeBot Chainlit - Docker Compose
+# ============================================================================
+# Configuração para executar o SafeBot com Docker Compose
+# ============================================================================
+
+services:
+  safebot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: safebot-chainlit:latest
+    container_name: safebot-chainlit
+    
+    # Porta exposta (host:container)
+    ports:
+      - "8000:8000"
+    
+    # Variáveis de ambiente
+    # IMPORTANTE: Configure suas chaves no arquivo .env
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - SAFEBOT_SUPERVISOR_PASSWORD=${SAFEBOT_SUPERVISOR_PASSWORD:-supervisor123}
+      - SAFEBOT_USER_PASSWORD=${SAFEBOT_USER_PASSWORD:-trabalhador123}
+      - SAFEBOT_OPERADOR1_PASSWORD=${SAFEBOT_OPERADOR1_PASSWORD:-operador123}
+      - SAFEBOT_TECNICO_PASSWORD=${SAFEBOT_TECNICO_PASSWORD:-tecnico123}
+      - CHAINLIT_AUTH_SECRET=${CHAINLIT_AUTH_SECRET:-change-this-secret-in-production}
+    
+    # Carregar variáveis do arquivo .env
+    env_file:
+      - .env
+    
+    # Volumes para persistência de dados
+    volumes:
+      # Persistir o banco de dados vetorial ChromaDB
+      - chromadb_data:/app/tmp/chromadb
+      # Persistir configurações do Chainlit (opcional)
+      - chainlit_data:/app/.chainlit
+      # Se quiser usar PDFs customizados, descomente:
+      # - ./data/pdfs:/app/data/pdfs:ro
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Recursos (opcional - ajuste conforme necessário)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 2G
+    #     reservations:
+    #       cpus: '1'
+    #       memory: 512M
+    
+    # Rede
+    networks:
+      - safebot-network
+    
+    # Logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Volumes nomeados para persistência
+volumes:
+  chromadb_data:
+    driver: local
+  chainlit_data:
+    driver: local
+
+# Rede customizada
+networks:
+  safebot-network:
+    driver: bridge
