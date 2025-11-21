@@ -130,29 +130,29 @@ def get_welcome_message_by_role(role: str, user_name: str) -> str:
     """
     
     if role == "supervisor":
-        return f"""# SafeBot - Assistente NR-06
+        return f"""# SafeBot - Assistente de Segurança do Trabalho
 
-Olá, **{user_name}**! Sou especializado em fornecer suporte técnico sobre Equipamentos de Proteção Individual (NR-06).
+Olá, **{user_name}**! Sou especializado em fornecer suporte técnico sobre normas regulamentadoras de segurança do trabalho.
 
 **Como posso ajudar:**
-- Interpretação técnica da NR-06
-- Elaboração de POPs e procedimentos
+- Interpretação técnica de normas
+- Elaboração de procedimentos
 - Auditorias e conformidade
-- Análise de riscos e responsabilidades legais
-- Documentação obrigatória
+- Análise de riscos e responsabilidades
+- Documentação técnica
 
-Faça sua consulta técnica."""
+Faça sua consulta."""
     
     else:  # user (trabalhador)
         return f"""# SafeBot - Assistente de Segurança
 
-Olá, **{user_name}**! Estou aqui para te ajudar com dúvidas sobre EPIs (Equipamentos de Proteção Individual).
+Olá, **{user_name}**! Estou aqui para te ajudar com dúvidas sobre segurança no trabalho.
 
 **Posso te ajudar com:**
-- Como usar seus EPIs corretamente
+- Como usar equipamentos de proteção
 - Quando usar cada equipamento
-- Seus direitos sobre EPIs
-- Como pedir ou trocar equipamentos
+- Seus direitos sobre segurança
+- Como pedir ou reportar equipamentos
 
 Pode perguntar à vontade!"""
 
