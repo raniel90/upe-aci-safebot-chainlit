@@ -1,14 +1,14 @@
 # 🏗️ Arquitetura do SafeBot
 
-**Versão:** 3.0  
+**Versão:** 1.0  
 **Última atualização:** 20/11/2025  
 **Status:** Produção
 
 ---
 
-## 📋 Visão Geral
+## Visão Geral
 
-SafeBot é um assistente conversacional especializado em NR-06 (Equipamentos de Proteção Individual) que utiliza Retrieval-Augmented Generation (RAG) para fornecer informações precisas e contextualizadas baseadas na norma regulamentadora.
+SafeBot é um assistente conversacional especializado em normas regulamentadoras de segurança do trabalho que utiliza Retrieval-Augmented Generation (RAG) para fornecer informações precisas e contextualizadas baseadas nas normas oficiais.
 
 ### Tecnologias Principais
 
@@ -25,56 +25,56 @@ SafeBot é um assistente conversacional especializado em NR-06 (Equipamentos de 
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      CAMADA DE APRESENTAÇÃO                  │
-│                                                               │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │         Chainlit Web Interface                       │  │
-│  │  • Chat UI                                           │  │
-│  │  • Autenticação (Password/OAuth)                     │  │
-│  │  • Streaming em tempo real                           │  │
-│  │  • Gestão de sessões                                 │  │
-│  └──────────────────────────────────────────────────────┘  │
+│                      CAMADA DE APRESENTAÇÃO                 │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │         Chainlit Web Interface                       │   │
+│  │  • Chat UI                                           │   │
+│  │  • Autenticação (Password/OAuth)                     │   │
+│  │  • Streaming em tempo real                           │   │
+│  │  • Gestão de sessões                                 │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                     CAMADA DE LÓGICA                         │
-│                                                               │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │         Sistema de Roles                             │  │
-│  │  • Supervisor (Técnico/Gerencial)                    │  │
-│  │  • Trabalhador (Simples/Prático)                     │  │
-│  │  • Prompts personalizados por perfil                 │  │
-│  └──────────────────────────────────────────────────────┘  │
-│                            ↓                                  │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │         LangChain LCEL Orchestration                 │  │
-│  │  • RAG Chain (Retrieval + Generation)                │  │
-│  │  • Gestão de contexto conversacional                 │  │
-│  │  • Streaming de respostas                            │  │
-│  └──────────────────────────────────────────────────────┘  │
+│                     CAMADA DE LÓGICA                        │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │         Sistema de Roles                             │   │
+│  │  • Supervisor (Técnico/Gerencial)                    │   │
+│  │  • Trabalhador (Simples/Prático)                     │   │
+│  │  • Prompts personalizados por perfil                 │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                            ↓                                │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │         LangChain LCEL Orchestration                 │   │
+│  │  • RAG Chain (Retrieval + Generation)                │   │
+│  │  • Gestão de contexto conversacional                 │   │
+│  │  • Streaming de respostas                            │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                     CAMADA DE DADOS                          │
-│                                                               │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────────────┐  │
-│  │ ChromaDB │    │ Claude   │    │ OpenAI Embeddings    │  │
-│  │ Vector   │←→  │ Sonnet   │    │ text-embedding-ada   │  │
-│  │ Store    │    │ 4.5      │    │                      │  │
-│  └──────────┘    └──────────┘    └──────────────────────┘  │
-│       ↑                                                       │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │         PDF Source (NR-06)                           │  │
-│  │  • Chunks de 1500 caracteres                         │  │
-│  │  • Overlap de 300 caracteres                         │  │
-│  │  • Metadados enriquecidos                            │  │
-│  └──────────────────────────────────────────────────────┘  │
+│                     CAMADA DE DADOS                         │
+│                                                             │
+│  ┌──────────┐    ┌──────────┐    ┌──────────────────────┐   │
+│  │ ChromaDB │    │ Claude   │    │ OpenAI Embeddings    │   │
+│  │ Vector   │←→  │ Sonnet   │    │ text-embedding-ada   │   │
+│  │ Store    │    │ 4.5      │    │                      │   │
+│  └──────────┘    └──────────┘    └──────────────────────┘   │
+│       ↑                                                     │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │         PDF Source (NR-06)                           │   │
+│  │  • Chunks de 1500 caracteres                         │   │
+│  │  • Overlap de 300 caracteres                         │   │
+│  │  • Metadados enriquecidos                            │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🎯 Componentes Arquiteturais
+## Componentes Arquiteturais
 
 ### 1. Interface & Autenticação
 
@@ -105,7 +105,7 @@ SafeBot é um assistente conversacional especializado em NR-06 (Equipamentos de 
 | Citações | Artigos e páginas específicas | Linguagem natural |
 | Análise | Detalhada com POPs/auditorias | Prática e objetiva |
 | Formatação | Estruturada | Fluida e concisa |
-| Foco | Gestão e conformidade | Uso correto de EPIs |
+| Foco | Gestão e conformidade | Uso correto e segurança |
 
 **Implementação**: 
 - Prompts específicos por role
@@ -151,7 +151,7 @@ SafeBot é um assistente conversacional especializado em NR-06 (Equipamentos de 
 **Pipeline**:
 
 ```
-PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
+PDFs (Normas) → Extração de Texto → Chunking → Embeddings → Vector Store
 ```
 
 **Chunking**:
@@ -161,12 +161,12 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 - Objetivo: Capturar artigos completos com contexto
 
 **Metadados por Chunk**:
-- source: "NR-06"
+- source: identificação da norma (ex: "NR-06")
 - page: número da página
 - document_type: "norma_regulamentadora"
-- nr_number: "06"
-- year: 2022
-- topic: "equipamentos_protecao_individual"
+- nr_number: número da NR
+- year: ano da versão
+- topic: tema da norma
 - language: "portuguese"
 
 ---
@@ -194,7 +194,7 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 
 ---
 
-## 🔄 Fluxo de Interação
+## Fluxo de Interação
 
 ### Jornada de uma Pergunta
 
@@ -229,7 +229,7 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 
 ---
 
-## 📊 Características Técnicas
+## Características Técnicas
 
 ### Performance
 
@@ -255,67 +255,61 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 
 ---
 
-## 🚀 Decisões Arquiteturais
+## Decisões Arquiteturais
 
-### 1. Claude Sonnet 4.5 vs GPT-4o-mini
+### 1. Large Language Model
 
-**Decisão**: Claude Sonnet 4.5
+**Escolha**: Claude Sonnet 4.5 (Anthropic)
 
 **Justificativa**:
-- Melhor aderência a instruções complexas
-- Menor taxa de alucinação (crítico para segurança do trabalho)
+- Excelente aderência a instruções complexas
+- Baixa taxa de alucinação (crítico para contextos regulamentadores)
 - Streaming nativo com LCEL
-- Contexto maior (200k vs 128k tokens)
-- Mais conservador (não inventa informações)
-
-**Trade-off**: Custo ligeiramente maior, mas compensado pela qualidade
+- Contexto de 200k tokens
+- Conservador e factual
 
 ---
 
-### 2. MMR vs Similarity Search
+### 2. Estratégia de Retrieval
 
-**Decisão**: MMR (Maximum Marginal Relevance)
+**Escolha**: MMR (Maximum Marginal Relevance)
 
 **Justificativa**:
-- Elimina chunks duplicados/redundantes
+- Elimina chunks duplicados
 - Maior diversidade de informação
 - Melhor cobertura do documento
 - Respostas mais completas
 
-**Trade-off**: ~20% mais lento, mas qualidade superior
+**Configuração**: fetch_k=20, k=5, lambda_mult=0.7
 
 ---
 
-### 3. LCEL vs ConversationalRetrievalChain
+### 3. Orquestração
 
-**Decisão**: LCEL (LangChain Expression Language)
+**Escolha**: LCEL (LangChain Expression Language)
 
 **Justificativa**:
 - Streaming nativo funcionando
-- Mais moderno e mantido
+- Padrão moderno e mantido
 - Maior flexibilidade
 - Melhor performance
-- Código mais limpo
-
-**Trade-off**: Requer mais código manual, mas maior controle
+- Componibilidade
 
 ---
 
-### 4. Chunks de 1500 caracteres
+### 4. Configuração de Chunks
 
-**Decisão**: 1500 chars (overlap 300)
+**Escolha**: 1500 caracteres (overlap 300)
 
 **Justificativa**:
-- Captura artigos completos da NR-06
+- Captura artigos completos das normas
 - Melhor contexto para perguntas complexas
-- Menos fragmentação
-- Overlap suficiente para continuidade
-
-**Trade-off**: Menos chunks totais, mas mais contexto por chunk
+- Menos fragmentação de conteúdo
+- Overlap suficiente para continuidade entre chunks
 
 ---
 
-## 🎨 Padrões de Design
+## Padrões de Design
 
 ### Separation of Concerns
 
@@ -340,7 +334,7 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 
 ---
 
-## 📦 Dependências Principais
+## Dependências Principais
 
 | Categoria | Tecnologia | Versão | Uso |
 |-----------|-----------|--------|-----|
@@ -353,74 +347,21 @@ PDF (NR-06) → Extração de Texto → Chunking → Embeddings → Vector Store
 
 ---
 
-## 🔐 Variáveis de Ambiente
-
-```
-ANTHROPIC_API_KEY    # Claude API key
-OPENAI_API_KEY       # OpenAI Embeddings
-CHAINLIT_AUTH_SECRET # Segredo de autenticação
-```
-
----
-
-## 📁 Estrutura de Arquivos
-
-```
-safebot-chainlit/
-├── chainlit_app.py          # Aplicação principal
-├── auth.py                  # Autenticação e roles
-├── prompts.py               # Prompts por role
-├── data/pdfs/               # PDF da NR-06
-├── tmp/chromadb/            # Vector store local
-├── public/                  # Assets (logos, CSS)
-└── pyproject.toml           # Dependências
-```
-
----
-
-## 🎯 Casos de Uso Suportados
+## Casos de Uso Suportados
 
 ### Trabalhador (User)
 
-- Identificar EPIs necessários para atividade
-- Entender como usar EPIs corretamente
-- Verificar direitos sobre fornecimento de EPIs
-- Saber quando trocar/solicitar EPIs
-- Reportar problemas com EPIs
+- Identificar equipamentos de proteção necessários
+- Entender como usar equipamentos corretamente
+- Verificar direitos sobre fornecimento
+- Saber quando trocar/solicitar equipamentos
+- Reportar problemas ou não conformidades
 
 ### Supervisor (Gestor)
 
-- Interpretar artigos técnicos da NR-06
+- Interpretar artigos técnicos das normas
 - Elaborar POPs e procedimentos
 - Realizar auditorias de conformidade
 - Analisar responsabilidades legais
 - Gerar documentação técnica
 - Avaliar riscos e medidas de controle
-
----
-
-## 🔮 Extensibilidade
-
-### Preparado Para:
-
-- **Multi-tenancy**: Separação por empresa/organização
-- **Outras NRs**: Arquitetura suporta múltiplos documentos
-- **OAuth Providers**: Google, GitHub, Azure AD, AWS Cognito
-- **Cloud Deployment**: Chroma Cloud, AWS, Azure, GCP
-- **Analytics**: Tracking de perguntas e qualidade de respostas
-- **Feedback Loop**: Sistema de avaliação de respostas
-
----
-
-## 📚 Documentação Relacionada
-
-- `AUTHENTICATION.md` - Detalhes de autenticação e roles
-- `ROLES.md` - Sistema de roles e personalização
-- `DOCKER.md` - Deployment com containers
-- `QUICKSTART.md` - Guia de início rápido
-
----
-
-**Versão**: 3.0  
-**Mantido por**: Equipe SafeBot  
-**Última revisão**: 20/11/2025
