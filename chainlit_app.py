@@ -7,14 +7,18 @@ import os
 from typing import List
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain.chains import ConversationalRetrievalChain
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import Document
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.prompts import ChatPromptTemplate
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.schema.runnable import Runnable, RunnablePassthrough
+from langchain.schema.runnable.config import RunnableConfig
+from langchain.schema import StrOutputParser
+from langchain.chains import create_history_aware_retriever, create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from dotenv import load_dotenv
 
 import chainlit as cl
@@ -38,7 +42,10 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Ainda necessário para embedding
 PDF_PATH = "data/pdfs/nr-06-atualizada-2022-1.pdf"
 
 # Text splitter para documentos
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=250)
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1500,  # Aumentado para 1500 para capturar mais contexto
+    chunk_overlap=300  # Aumentado para 300 para melhor continuidade entre chunks
+)
 
 # NOTA: As instruções específicas por role estão agora em prompts.py
 # Elas são carregadas dinamicamente baseado na role do usuário logado
@@ -146,95 +153,57 @@ async def start():
     instructions = get_instructions_by_role(user_role)
     system_context = get_system_context_by_role(user_role)
 
-    # Criar prompt template para QA (usando template string, não Messages)
-    qa_template = f"""╔══════════════════════════════════════════════════════════════╗
-║ REGRAS CRÍTICAS - NUNCA VIOLE ESTAS INSTRUÇÕES              ║
-╚══════════════════════════════════════════════════════════════╝
-
-⚠️ ADERÊNCIA OBRIGATÓRIA AO CONTEXTO:
-
-1. ✅ VOCÊ DEVE usar EXCLUSIVAMENTE as informações presentes no "Contexto da NR-06" abaixo
-2. ✅ VOCÊ DEVE citar a página específica de onde tirou a informação
-3. ❌ É PROIBIDO inventar, inferir ou extrapolar informações não presentes no contexto
-4. ❌ É PROIBIDO criar exemplos que não estejam explicitamente no documento
-5. ❌ NUNCA suponha informações que não estão escritas no contexto fornecido
-
-📋 QUANDO O CONTEXTO NÃO CONTÉM A RESPOSTA:
-
-• Seja TRANSPARENTE: "Não encontrei informação específica sobre [tópico] na NR-06"
-• Se aplicável, mencione APENAS princípios gerais que ESTEJAM no contexto fornecido
-• Sugira consultar supervisor/SESMT para casos específicos não cobertos
-• NUNCA tente responder sem fundamentação no contexto
-
-✅ EXEMPLO CORRETO:
-Usuário: "Qual a cor do capacete para soldador?"
-Contexto: [contém info sobre cores]
-Resposta: "Segundo a NR-06 (Página X), o capacete para soldador deve ser [info do contexto]"
-
-❌ EXEMPLO INCORRETO:
-Usuário: "Qual a cor do capacete para soldador?"
-Contexto: [NÃO contém info sobre cores]
-Resposta: "Normalmente é azul ou amarelo" ← PROIBIDO! Isso é inventar informação!
-
-✅ RESPOSTA CORRETA quando não há info:
-"Não encontrei informação específica sobre cores de capacete na NR-06. Para essa dúvida específica, recomendo consultar seu supervisor ou a equipe de segurança (SESMT)."
-
-════════════════════════════════════════════════════════════════
-
-{instructions}
+    # Criar prompt template para QA (LCEL com streaming)
+    qa_system_prompt = f"""{instructions}
 
 {system_context}
 
-════════════════════════════════════════════════════════════════
+Você é o SafeBot, assistente especializado em EPIs (NR-06).
 
-📖 CONTEXTO DA NR-06 (USE APENAS ISTO):
-{{context}}
+REGRAS CRÍTICAS:
+1. LEIA TODO O CONTEXTO abaixo antes de responder
+2. Use APENAS informações do contexto fornecido
+3. Se não souber: seja transparente
+4. NUNCA invente informações
 
-════════════════════════════════════════════════════════════════
+Use o contexto abaixo para responder à pergunta:
 
-💬 HISTÓRICO DA CONVERSA:
-{{chat_history}}
+{{context}}"""
 
-════════════════════════════════════════════════════════════════
+    qa_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", qa_system_prompt),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+        ]
+    )
 
-❓ PERGUNTA DO USUÁRIO: {{question}}
-
-════════════════════════════════════════════════════════════════
-
-🤖 SUA RESPOSTA (baseada EXCLUSIVAMENTE no contexto acima):"""
-
-    qa_prompt = ChatPromptTemplate.from_template(qa_template)
-
-    # Criar chain com Claude Sonnet 4.5 (versão mais recente)
+    # Criar LLM com streaming habilitado
     llm = ChatAnthropic(
         model="claude-sonnet-4-5-20250929",
         temperature=0.3,
         max_tokens=4096,
+        streaming=True,  # Habilita streaming
         anthropic_api_key=ANTHROPIC_API_KEY,
     )
 
-    # Configurar retriever com metadados
+    # Configurar retriever com MMR
     retriever = docsearch.as_retriever(
-        search_type="similarity",
+        search_type="mmr",
         search_kwargs={
-            "k": 6,  # Aumentado de 4 para 6 documentos para mais contexto relevante
+            "k": 5,
+            "fetch_k": 20,
+            "lambda_mult": 0.7,
         },
     )
 
-    # Criar chain com prompt customizado
-    chain = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        chain_type="stuff",
-        retriever=retriever,
-        memory=memory,
-        return_source_documents=True,
-        verbose=True,
-        combine_docs_chain_kwargs={"prompt": qa_prompt},
-    )
+    # Criar chain moderna com LCEL (suporta streaming nativo)
+    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
 
     # Armazenar na sessão do usuário
-    cl.user_session.set("chain", chain)
-    cl.user_session.set("docsearch", docsearch)
+    cl.user_session.set("rag_chain", rag_chain)
+    cl.user_session.set("message_history", message_history)
     cl.user_session.set("user_role", user_role)
     cl.user_session.set("instructions", instructions)
     cl.user_session.set("system_context", system_context)
@@ -243,29 +212,55 @@ Resposta: "Normalmente é azul ou amarelo" ← PROIBIDO! Isso é inventar inform
 @cl.on_message
 async def main(message: cl.Message):
     """
-    Processa mensagens do usuário com contexto personalizado por role
+    Processa mensagens do usuário com streaming usando LCEL
     """
-    # Recuperar chain e instruções da sessão
-    chain = cl.user_session.get("chain")  # type: ConversationalRetrievalChain
+    # Recuperar chain e histórico da sessão
+    rag_chain = cl.user_session.get("rag_chain")
+    message_history = cl.user_session.get("message_history")
     user_role = cl.user_session.get("user_role", "user")
 
-    if not chain:
+    if not rag_chain:
         await cl.Message(
             content="❌ **Erro:** Sessão não inicializada. Por favor, recarregue a página."
         ).send()
         return
 
-    # Callback - o streaming é automático quando ChatOpenAI tem streaming=True
-    cb = cl.AsyncLangchainCallbackHandler()
+    # Preparar input com histórico de chat
+    chat_history_messages = message_history.messages if message_history else []
 
-    # Processar mensagem com streaming automático
+    # Criar mensagem vazia para streaming
+    msg = cl.Message(content="")
+    await msg.send()
+
+    # Processar com streaming
     try:
-        res = await chain.acall(message.content, callbacks=[cb])
-        answer = res["answer"]
-        source_documents = res["source_documents"]  # type: List[Document]
+        # Stream a resposta
+        response_text = ""
+        source_documents = []
+
+        async for chunk in rag_chain.astream(
+            {
+                "input": message.content,
+                "chat_history": chat_history_messages,
+            },
+            config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
+        ):
+            # Capturar resposta
+            if "answer" in chunk:
+                answer_chunk = chunk["answer"]
+                response_text += answer_chunk
+                await msg.stream_token(answer_chunk)
+            
+            # Capturar documentos de contexto
+            if "context" in chunk:
+                source_documents = chunk["context"]
+
+        # Adicionar mensagens ao histórico
+        message_history.add_user_message(message.content)
+        message_history.add_ai_message(response_text)
 
         # Criar elementos de texto para as fontes
-        text_elements = []  # type: List[cl.Text]
+        text_elements = []
 
         if source_documents:
             # Agrupar fontes por página
@@ -284,21 +279,21 @@ async def main(message: cl.Message):
                     cl.Text(content=combined_content, name=source_name, display="side")
                 )
 
-            # Adicionar referências das fontes na resposta
+            # Adicionar referências das fontes
             source_names = [text_el.name for text_el in text_elements]
             if source_names:
-                answer += (
-                    f"\n\n---\n📚 **Fontes consultadas:** {', '.join(source_names)}"
-                )
+                footer = f"\n\n---\n📚 **Fontes consultadas:** {', '.join(source_names)}"
+                await msg.stream_token(footer)
 
-        # Enviar resposta com fontes
-        await cl.Message(content=answer, elements=text_elements).send()
+        # Atualizar mensagem final com elementos
+        msg.elements = text_elements
+        await msg.update()
 
     except Exception as e:
         await cl.Message(
             content=f"❌ **Erro ao processar sua pergunta:** {str(e)}\n\n"
             "Por favor, tente reformular sua pergunta ou verifique "
-            "se sua OPENAI_API_KEY está configurada corretamente."
+            "se sua ANTHROPIC_API_KEY está configurada corretamente."
         ).send()
 
 
