@@ -263,17 +263,30 @@ async def main(message: cl.Message):
         text_elements = []
 
         if source_documents:
+            # Remover conteúdos duplicados (chunks iguais)
+            unique_documents = []
+            seen_contents = set()
+            for doc in source_documents:
+                content_key = doc.page_content.strip()
+                if content_key not in seen_contents:
+                    seen_contents.add(content_key)
+                    unique_documents.append(doc)
+            source_documents = unique_documents
+
             # Agrupar fontes por página
             sources_by_page = {}
             for source_doc in source_documents:
                 page = source_doc.metadata.get("page", "N/A")
-                if page not in sources_by_page:
-                    sources_by_page[page] = []
-                sources_by_page[page].append(source_doc.page_content)
+                source_label = source_doc.metadata.get("source", "Documento")
+                key = (source_label, page)
+                if key not in sources_by_page:
+                    sources_by_page[key] = []
+                if source_doc.page_content not in sources_by_page[key]:
+                    sources_by_page[key].append(source_doc.page_content)
 
             # Criar elementos de texto para cada página
-            for page_num, contents in sources_by_page.items():
-                source_name = f"📄 NR-06 - Página {page_num}"
+            for (source_label, page_num), contents in sources_by_page.items():
+                source_name = f"📄 {source_label} - Página {page_num}"
                 combined_content = "\n\n---\n\n".join(contents)
                 text_elements.append(
                     cl.Text(content=combined_content, name=source_name, display="side")
